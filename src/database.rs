@@ -1,4 +1,4 @@
-use crate::{account::Account, history::HistoryPart};
+use crate::{account::Account, hasher, history::HistoryPart};
 use std::{collections::HashMap, fs};
 
 pub struct DataBase {}
@@ -75,7 +75,8 @@ impl DataBase {
         hm
     }
 
-    pub fn check_login_credentials(login: String, password_hash: String) -> bool {
+    pub fn check_login_credentials(login: String, password: String) -> bool {
+        let password_hash = hasher::hash_string(password);
         if let Some(account) = Self::get_account(&login) {
             account.password == password_hash
         } else {

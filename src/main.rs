@@ -4,6 +4,8 @@ pub mod history;
 pub mod database;
 pub mod account;
 pub mod hasher;
+pub mod time;
+pub mod config;
 
 use database::DataBase;
 use rocket::*;
@@ -13,10 +15,7 @@ use executor::*;
 
 #[launch]
 fn rocket() -> _ {
-    Executor::execute(
-        Commands::SetBalance { amount: 0, of: String::new() }
-    );
-    rocket::build().mount("/", routes![index, execute, balance_of, get_history, get_account_skeleton_list, check_login_credentials])
+    rocket::build().mount("/", routes![index, execute, get_account_skeleton_list, check_login_credentials, get_account])
 }
 
 #[get("/")]
@@ -35,22 +34,40 @@ fn execute(command_wrapper: Json<CommandWrapper>) -> &'static str {
     ""
 }
 
-#[get("/get_balance/<of>")]
-fn balance_of(of: String) -> String {
-    DataBase::get_balance(&of).unwrap_or_default().to_string()
-}
+// #[get("/get_balance/<of>")]
+// fn balance_of(of: String) -> String {
+//     DataBase::get_balance(&of).unwrap_or_default().to_string()
+// }
 
-#[get("/get_history/<of>")]
-fn get_history(of: String) -> String {
-    serde_json::to_string(&DataBase::get_history(&of).unwrap_or_default()).unwrap()
-}
+// #[get("/get_history/<of>")]
+// fn get_history(of: String) -> String {
+//     serde_json::to_string(&DataBase::get_history(&of).unwrap_or_default()).unwrap()
+// }
 
 #[get("/get_account_skeleton_list")]
 fn get_account_skeleton_list() -> String {
     serde_json::to_string(&DataBase::get_user_skeleton_list()).unwrap()
 }
 
+// #[get("/does_exist/<id>")]
+// fn does_exist(id: String) -> String {
+//     serde_json::to_string(&DataBase::does_exist(&id)).unwrap()
+// }
+
+#[get("/get_account/<id>")]
+fn get_account(id: String) -> String {
+    serde_json::to_string(&DataBase::get_account(&id)).unwrap()
+}
+
 #[get("/check_login_credentials?<login>&<password>")]
 fn check_login_credentials(login: String, password: String) -> String {
-    serde_json::to_string(&DataBase::check_login_credentials(login, password)).unwrap()
+    let result;
+
+    if login == config::ADMIN_LOGIN && hasher::hash_string(password.clone()) == config::ADMIN_PASSWORD_HASH {
+        result = true;
+    } else {
+        result = DataBase::check_login_credentials(login, password);
+    }
+
+    serde_json::to_string(&result).unwrap()
 }

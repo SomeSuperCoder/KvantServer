@@ -2,9 +2,9 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum Commands {
-    CreateUser { id: String, fio: String, birthdate: String, password_hash: String },
+    CreateUser { id: String, fio: String, birthdate: String, password: String },
     DeleteUser { id: String },
-    SetBalance { of: String, amount: u128  }
+    ChangeBalance { of: String, amount: i128, for_what: String }
 }
 
 #[derive(Serialize, Deserialize, Clone)]
