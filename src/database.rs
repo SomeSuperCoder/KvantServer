@@ -1,3 +1,6 @@
+use chrono::format::Item;
+use rocket::Data;
+
 use crate::{account::Account, hasher, history::HistoryPart};
 use std::{collections::HashMap, fs};
 
@@ -82,5 +85,19 @@ impl DataBase {
         } else {
             false
         }
+    }
+
+    pub fn get_account_list() -> Vec<Account> {
+        let mut result = Vec::new();
+        let dir = fs::read_dir("./kvant_db").unwrap();
+
+        for file in dir {
+            let file = file.unwrap();
+            let text = fs::read_to_string(file.path()).unwrap();
+            let account: Account = serde_json::from_str(text.as_str()).unwrap();
+            result.push(account)
+        }
+
+        result
     }
 }

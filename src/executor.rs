@@ -51,20 +51,20 @@ impl Executor {
     }
 
     pub fn validate(command_wrapper: CommandWrapper) -> bool {
-        if command_wrapper.login == config::ADMIN_LOGIN && hasher::hash_string(command_wrapper.password.clone()) == config::ADMIN_PASSWORD_HASH {
-            return true;
-        }
         if let Some(account) = DataBase::get_account(&command_wrapper.login) {
             if hasher::hash_string(command_wrapper.password) != account.password {
                 return false
             }
             
-            if account.id.len() != 6 {
+            if !([6, 7].contains(&account.id.len())) {
+                println!("The login len: {}", &account.id.len());
                 return false
             }
-
+            println!("Validate true");
             true
         } else {
+            println!("Account not found error: {} not found", &command_wrapper.login);
+
             false
         }
     }

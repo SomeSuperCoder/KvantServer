@@ -15,7 +15,7 @@ use executor::*;
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![index, execute, get_account_skeleton_list, check_login_credentials, get_account])
+    rocket::build().mount("/", routes![index, execute, get_account_skeleton_list, check_login_credentials, get_account, does_exist_pair])
 }
 
 #[get("/")]
@@ -59,15 +59,24 @@ fn get_account(id: String) -> String {
     serde_json::to_string(&DataBase::get_account(&id)).unwrap()
 }
 
+#[get("/does_exist_pair?<name>&<birthdate>")]
+fn does_exist_pair(name: String, birthdate: String) -> String {
+    let mut existance: Option<String> = None;
+
+    for account in &DataBase::get_account_list() {
+        if account.name == name && account.birthdate == birthdate {
+            existance = Some(account.id.clone());
+        }
+    }
+
+    serde_json::to_string(&existance).unwrap()
+}
+
 #[get("/check_login_credentials?<login>&<password>")]
 fn check_login_credentials(login: String, password: String) -> String {
     let result;
 
-    if login == config::ADMIN_LOGIN && hasher::hash_string(password.clone()) == config::ADMIN_PASSWORD_HASH {
-        result = true;
-    } else {
-        result = DataBase::check_login_credentials(login, password);
-    }
+    result = DataBase::check_login_credentials(login, password);
 
     serde_json::to_string(&result).unwrap()
 }
