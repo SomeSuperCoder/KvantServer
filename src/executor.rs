@@ -26,11 +26,13 @@ impl Executor {
             Commands::ChangeBalance { of, amount, for_what } => {
                 // Update user balance
                 let old_balance = DataBase::get_balance(&of);
+                println!("Of: {}, Amount: {}, For what: {}", of, amount, for_what);
+                
                 if let Some(old_balance) = old_balance {
                     if amount > old_balance as i128 {
                         println!("Insufficent balance")
                     }
-                    let new_balance = (old_balance as i128 - amount) as u128;
+                    let new_balance = (old_balance as i128 + amount) as u128;
                     DataBase::set_balance(&of, new_balance);
                     
                 }
