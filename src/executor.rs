@@ -46,6 +46,12 @@ impl Executor {
             },
             Commands::DeleteUser { id } => {
                 DataBase::remove_accout(&id);
+            },
+            Commands::ChangePassword { of, to } => {
+                if let Some(mut account) = DataBase::get_account(&of) {
+                    account.password = hasher::hash_string(to);
+                    DataBase::set_account(account)
+                }
             }
         }
     }
