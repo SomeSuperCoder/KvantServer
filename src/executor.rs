@@ -3,6 +3,7 @@ use crate::database::DataBase;
 use crate::config;
 use crate::hasher;
 use crate::history::HistoryPart;
+use crate::send_email::send_mail;
 use crate::{commands::Commands, commands::CommandWrapper};
 
 pub struct Executor {}
@@ -54,6 +55,9 @@ impl Executor {
                     account.password = hasher::hash_string(to);
                     DataBase::set_account(account)
                 }
+            },
+            Commands::SendMail { to, data } => {
+                println!("Email send result: {}", send_mail(&to, data).is_ok());
             }
         }
     }

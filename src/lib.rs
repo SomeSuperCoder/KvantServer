@@ -6,3 +6,4 @@ pub mod account;
 pub mod hasher;
 pub mod time;
 pub mod config;
+pub mod send_email;
