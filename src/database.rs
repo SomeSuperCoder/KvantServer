@@ -79,9 +79,8 @@ impl DataBase {
     }
 
     pub fn check_login_credentials(login: String, password: String) -> bool {
-        let password_hash = hasher::hash_string(password);
         if let Some(account) = Self::get_account(&login) {
-            account.password == password_hash
+            account.password == password
         } else {
             false
         }
