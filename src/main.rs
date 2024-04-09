@@ -83,16 +83,15 @@ fn check_login_credentials(login: String, password: String) -> String {
 }
 
 #[get("/passwd?<login>&<new_password>")]
-fn passwd(login: String, new_password: String) -> String {
-    let result;
-
-    result = DataBase::check_login_credentials(login.clone(), "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f".to_string());
+fn passwd(login: String, new_password: String) -> &'static str {
+    let result = DataBase::check_login_credentials(login.clone(), "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f".to_string());
     
-    if let Some(mut account) = DataBase::get_account(&login.clone()) {
-        account.password = new_password;
-        DataBase::set_account(account)
+    if result {
+        if let Some(mut account) = DataBase::get_account(&login.clone()) {
+            account.password = new_password;
+            DataBase::set_account(account)
+        }
     }
 
-    serde_json::to_string(&result).unwrap()
+    ""
 }
-
