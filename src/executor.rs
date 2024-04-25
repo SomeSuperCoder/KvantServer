@@ -1,6 +1,5 @@
 use crate::account::Account;
 use crate::database::DataBase;
-use crate::config;
 use crate::hasher;
 use crate::history::HistoryPart;
 use crate::send_email::send_mail;
@@ -57,7 +56,13 @@ impl Executor {
                 }
             },
             Commands::SendMail { to, data } => {
-                println!("Email send result: {}", send_mail(&to, data).is_ok());
+                let _ = send_mail(&to, data);
+            },
+            Commands::AddRaiting { to, amount } => {
+                DataBase::add_raiting(to, amount);
+            },
+            Commands::ResetRaiting => {
+                DataBase::reset_raiting();
             }
         }
     }

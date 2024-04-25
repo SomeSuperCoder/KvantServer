@@ -16,7 +16,7 @@ use executor::*;
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![index, execute, get_account_skeleton_list, check_login_credentials, get_account, does_exist_pair, passwd])
+    rocket::build().mount("/", routes![index, execute, get_account_skeleton_list, check_login_credentials, get_account, does_exist_pair, passwd, get_raiting_skeleton, get_raiting])
 }
 
 #[get("/")]
@@ -35,25 +35,21 @@ fn execute(command_wrapper: Json<CommandWrapper>) -> &'static str {
     ""
 }
 
-// #[get("/get_balance/<of>")]
-// fn balance_of(of: String) -> String {
-//     DataBase::get_balance(&of).unwrap_or_default().to_string()
-// }
-
-// #[get("/get_history/<of>")]
-// fn get_history(of: String) -> String {
-//     serde_json::to_string(&DataBase::get_history(&of).unwrap_or_default()).unwrap()
-// }
-
 #[get("/get_account_skeleton_list")]
 fn get_account_skeleton_list() -> String {
     serde_json::to_string(&DataBase::get_user_skeleton_list()).unwrap()
 }
 
-// #[get("/does_exist/<id>")]
-// fn does_exist(id: String) -> String {
-//     serde_json::to_string(&DataBase::does_exist(&id)).unwrap()
-// }
+
+#[get("/raiting/<of>")]
+fn get_raiting(of: String) -> String {
+    serde_json::to_string(&DataBase::get_raiting(&of)).unwrap()
+}
+
+#[get("/get_raiting_skeleton")]
+fn get_raiting_skeleton() -> String {
+    serde_json::to_string(&DataBase::get_raiting_skeletons()).unwrap()
+}
 
 #[get("/get_account/<id>")]
 fn get_account(id: String) -> String {

@@ -1,8 +1,9 @@
-use chrono::format::Item;
-use rocket::Data;
 
-use crate::{account::Account, hasher, history::HistoryPart};
+use crate::{account::Account, history::HistoryPart};
 use std::{collections::HashMap, fs};
+
+const ACCOUNTS_PATH: &'static str = "./kvant_db/accounts";
+const RAITING_PATH: &'static str = "./kvant_db/raiting";
 
 pub struct DataBase {}
 
@@ -58,14 +59,14 @@ impl DataBase {
     }
 
     pub fn make_account_path(id: &String) -> String {
-        format!("./kvant_db/{}", id)
+        format!("{}/{}", ACCOUNTS_PATH, id)
     }
 
     pub fn get_user_skeleton_list() -> HashMap<String, String> {
         // name: id
         let mut hm = HashMap::new();
 
-        for entry in fs::read_dir("./kvant_db/").unwrap() {
+        for entry in fs::read_dir(ACCOUNTS_PATH).unwrap() {
             let entry = entry.unwrap();
             let id = entry.file_name();
             let id = String::from(id.to_str().unwrap());
@@ -88,7 +89,7 @@ impl DataBase {
 
     pub fn get_account_list() -> Vec<Account> {
         let mut result = Vec::new();
-        let dir = fs::read_dir("./kvant_db").unwrap();
+        let dir = fs::read_dir(ACCOUNTS_PATH).unwrap();
 
         for file in dir {
             let file = file.unwrap();
@@ -98,5 +99,50 @@ impl DataBase {
         }
 
         result
+    }
+
+    pub fn get_raiting(of: &String) -> u128 {
+        let mut raiting = 0;
+
+        if let Ok(data) = fs::read_to_string(Self::make_raiting_path(of.clone())) {
+            raiting = data.parse().unwrap();
+        }
+
+        raiting
+    }
+
+    pub fn add_raiting(to: String, amount: u128) {
+        let mut raiting: u128 = Self::get_raiting(&to);
+
+        raiting += amount;
+
+        fs::write(Self::make_raiting_path(to), raiting.to_string()).unwrap();
+    }
+
+    pub fn get_raiting_skeletons() -> HashMap<String, u128> {
+        let mut result = HashMap::new();
+
+        let dir = fs::read_dir(RAITING_PATH).unwrap();
+
+        for file in dir {
+            let file = file.unwrap();
+            let text = fs::read_to_string(file.path()).unwrap();
+            if let Some(account) = Self::get_account(&file.file_name().to_str().unwrap().to_string()) {
+                let balance: u128 = text.parse().unwrap();
+                let name = account.name;
+
+                result.insert(name, balance);
+            }
+        }
+
+        result
+    }
+    
+    pub fn reset_raiting() {
+        fs::remove_dir_all(RAITING_PATH).unwrap();
+    }
+
+    pub fn make_raiting_path(id: String) -> String {
+        format!("{}/{}", RAITING_PATH, id)
     }
 }
