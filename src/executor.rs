@@ -24,17 +24,25 @@ impl Executor {
                 DataBase::set_account(user);
             },
             Commands::ChangeBalance { of, amount, for_what } => {
+                if amount == 0 {
+                    return
+                }
                 // Update user balance
                 let old_balance = DataBase::get_balance(&of);
                 println!("Of: {}, Amount: {}, For what: {}", of, amount, for_what);
                 
                 if let Some(old_balance) = old_balance {
-                    if amount > old_balance as i128 {
-                        println!("Insufficent balance")
+                    if amount < 0 {
+                        if amount > old_balance as i128 {
+                            println!("Insufficent balance");
+                            return
+                        }
                     }
                     let new_balance = (old_balance as i128 + amount) as u128;
                     DataBase::set_balance(&of, new_balance);
-                    
+                    if amount > 0 {
+                        DataBase::add_raiting(of.clone(), amount as u128);
+                    }
                 }
 
                 // Update user history
@@ -57,9 +65,6 @@ impl Executor {
             },
             Commands::SendMail { to, data } => {
                 let _ = send_mail(&to, data);
-            },
-            Commands::AddRaiting { to, amount } => {
-                DataBase::add_raiting(to, amount);
             },
             Commands::ResetRaiting => {
                 DataBase::reset_raiting();

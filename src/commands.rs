@@ -7,7 +7,6 @@ pub enum Commands {
     ChangeBalance { of: String, amount: i128, for_what: String },
     ChangePassword { of: String, to: String },
     SendMail { to: String, data: Vec<u8> },
-    AddRaiting { to: String, amount: u128 },
     ResetRaiting
 }
 
