@@ -11,11 +11,11 @@ use lettre::{
 };
 
 
-pub fn send_mail(to: &str, data: Vec<u8>) -> Result<Response, lettre::transport::smtp::Error> {
+pub fn send_mail(to: &str, title: &str, data: Vec<u8>) -> Result<Response, lettre::transport::smtp::Error> {
     let m = Message::builder()
     .from("Kvantomat <nchk-kvantomat@yandex.ru>".parse().unwrap())
     .to(format!("User <{}>", to).parse().unwrap())
-    .subject("Student List")
+    .subject(title)
     .multipart(
         MultiPart::mixed()
             .singlepart(Attachment::new(String::from("list.xlsx")).body(

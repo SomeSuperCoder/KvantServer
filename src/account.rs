@@ -8,5 +8,6 @@ pub struct Account {
     pub name: String,
     pub birthdate: String,
     pub balance: u128,
+    pub creator: String,
     pub history: Vec<HistoryPart>
 }

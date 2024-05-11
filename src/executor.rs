@@ -10,7 +10,7 @@ pub struct Executor {}
 impl Executor {
     pub fn execute(command: Commands) {
         match command {
-            Commands::CreateUser { id, fio, birthdate, password } => {
+            Commands::CreateUser { id, fio, birthdate, password, creator } => {
                 let password2 = hasher::hash_string(password);
 
                 let user = Account {
@@ -18,6 +18,7 @@ impl Executor {
                     birthdate,
                     name: fio,
                     password: password2,
+                    creator,
                     ..Default::default()
                 };
                 
@@ -63,8 +64,8 @@ impl Executor {
                     DataBase::set_account(account)
                 }
             },
-            Commands::SendMail { to, data } => {
-                let _ = send_mail(&to, data);
+            Commands::SendMail { to, title_subject, data } => {
+                let _ = send_mail(&to, title_subject.as_str(), data);
             },
             Commands::ResetRaiting => {
                 DataBase::reset_raiting();
