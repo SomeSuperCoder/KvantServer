@@ -61,7 +61,7 @@ impl DataBase {
         format!("{}/{}", ACCOUNTS_PATH, id)
     }
 
-    pub fn get_user_skeleton_list() -> HashMap<String, String> {
+    pub fn get_user_skeleton_list() -> HashMap<String, Account> {
         // name: id
         let mut hm = HashMap::new();
 
@@ -70,9 +70,9 @@ impl DataBase {
             let id = entry.file_name();
             let id = String::from(id.to_str().unwrap());
             
-            let name = Self::get_account(&id).unwrap().name;
+            let account = Self::get_account(&id).unwrap();
 
-            hm.insert(id, name);
+            hm.insert(id, account);
         }
 
         hm
