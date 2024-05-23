@@ -1,6 +1,4 @@
-use std::fs;
-
-use lettre::message::{header, Attachment, Body, Message, MultiPart, SinglePart};
+use lettre::message::{Attachment, Message, MultiPart};
 use lettre::transport::smtp::response::Response;
 use lettre::{
     transport::smtp::{
