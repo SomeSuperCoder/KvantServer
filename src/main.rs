@@ -53,7 +53,7 @@ fn get_raiting_skeleton() -> String {
 
 #[get("/get_account/<id>")]
 fn get_account(id: String) -> String {
-    serde_json::to_string(&DataBase::get_account(&id)).unwrap()
+    serde_json::to_string(&DataBase::get_accout_skeleton(&id)).unwrap()
 }
 
 #[get("/does_exist_pair?<name>&<birthdate>")]

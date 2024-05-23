@@ -45,6 +45,19 @@ impl DataBase {
         }
     }
 
+    pub fn get_accout_skeleton(id: &String) -> Option<Account> {
+        let account = Self::get_account(id);
+        if let Some(mut account) = account {
+            if account.password.as_str() != "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f" {
+                account.password = String::new();
+            }
+
+            Some(account)
+        } else {
+            None
+        }
+    }
+
     pub fn set_account(account: Account) {
         fs::write(Self::make_account_path(&account.id), serde_json::to_string(&account).unwrap()).unwrap()
     }
@@ -70,7 +83,8 @@ impl DataBase {
             let id = entry.file_name();
             let id = String::from(id.to_str().unwrap());
             
-            let account = Self::get_account(&id).unwrap();
+            let mut account = Self::get_accout_skeleton(&id).unwrap();
+            account.password = String::new();
 
             hm.insert(id, account);
         }
