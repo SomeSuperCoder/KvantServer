@@ -38,6 +38,7 @@ impl DataBase {
     }
 
     pub fn get_account(id: &String) -> Option<Account> {
+        println!("Getting account: {id}");
         if let Ok(account_string) = fs::read_to_string(Self::make_account_path(id)) {
             serde_json::from_str(account_string.as_str()).unwrap()
         } else {
@@ -153,6 +154,7 @@ impl DataBase {
     
     pub fn reset_raiting() {
         fs::remove_dir_all(RAITING_PATH).unwrap();
+        fs::create_dir(RAITING_PATH).unwrap();
     }
 
     pub fn make_raiting_path(id: String) -> String {
